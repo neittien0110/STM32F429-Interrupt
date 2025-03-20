@@ -200,28 +200,24 @@ void SysTick_Handler(void)
 
 /**
   * @brief This function handles EXTI line0 interrupt.
-  * @description
-  *   	- Hàm được triêu gọi khi ngắt EXT1 xảy ra.
-  *		- Theo cấu hình ở file ioc, ngắt xảy ra với cả có sườn dương (rising edge), hoặc sườn âm (falling edge) của nút bấm PA0 (B1 button))
-  *			- Sườn dương, rising edge, là khi tín hiệu từ nút bấm B1 từ mức 0 chuyển lên mức 1.  Nói cách khác, lập trình Windows gọi đây là hàm sự kiện OnKeyDown
-  *			- Sườn âm, falling edge, là khi tín hiệu từ nút bấm B1 từ mức 1 chuyển về mức 0.  Nói cách khác, lập trình Windows gọi đây là hàm sự kiện OnKeyUp
   */
 void EXTI0_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI0_IRQn 0 */
-	if (HAL_GPIO_ReadPin(GPIOG, B1_Pin) == 1) {
-		// ---------- Khi có sự kiện, và giá trị mới = 1, chứng tỏ rằng đây là sườn dương ----------
-		// Đèn LED3 sáng
-		HAL_GPIO_WritePin(GPIOG, LD3_Pin, GPIO_PIN_SET);
-		// Đèn LED4 đảo ngược trạng thái
-		HAL_GPIO_WritePin(GPIOG, LD4_Pin, ! HAL_GPIO_ReadPin(GPIOG, LD4_Pin));
-	} else {
-		// ---------- Ngược lại Khi có sự kiện, và giá trị mới = 0, chứng tỏ rằng đây là sườn âm -----
-		// Đèn LED3 tắt
-		HAL_GPIO_WritePin(GPIOG, LD3_Pin, GPIO_PIN_RESET);
-	}
 
+	// Đèn LED4 đảo ngược trạng thái.==> LD4 nháy led chứng tỏ handler thực sự được gọi
+	HAL_GPIO_TogglePin(GPIOG, LD3_Pin);
+
+	// Phân biệt rising edge, falling ege trong việc tạo hiệu ứng đèn LD4
+	GPIO_PinState pinState = HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin);
+	// Nếu trạng thái ổn định = 0, tức là nút bấm B1 đã vừa nhả, falling edge thì
+	if (pinState == GPIO_PIN_RESET) {
+		// ---------- Khi có sự kiện, và giá trị mới = 0, chứng tỏ rằng đây là sườn âm ----------
+		// Đèn LED4 đảo giá trị
+		HAL_GPIO_TogglePin(GPIOG, LD4_Pin);
+	}
   /* USER CODE END EXTI0_IRQn 0 */
+
   HAL_GPIO_EXTI_IRQHandler(B1_Pin);
   /* USER CODE BEGIN EXTI0_IRQn 1 */
 
