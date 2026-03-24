@@ -217,7 +217,6 @@ void EXTI0_IRQHandler(void)
 		HAL_GPIO_TogglePin(GPIOG, LD4_Pin);
 	}
   /* USER CODE END EXTI0_IRQn 0 */
-
   HAL_GPIO_EXTI_IRQHandler(B1_Pin);
   /* USER CODE BEGIN EXTI0_IRQn 1 */
 
